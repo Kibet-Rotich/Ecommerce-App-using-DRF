@@ -128,3 +128,9 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+DARAJA_CONSUMER_KEY = 'EZnLo86pMDXxz1tRDpx3DNnoOCEpW1jHL8AeDbLkhaGFLfnE'
+DARAJA_CONSUMER_SECRET = 'pl6F4uc3vf7mx3B3Iei02ZHpM7IhLGIl68OA4FrDktGpt7wUf9bTWllBD0zEmcM9'
+# DARAJA_BUSINESS_SHORTCODE = 'your_business_shortcode'
+DARAJA_PASSKEY = 'your_passkey'
+DARAJA_CALLBACK_URL = 'https://yourdomain.com/api/payment-callback/'  # Update with your actual callback URL

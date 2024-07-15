@@ -39,7 +39,7 @@ function addToCart(id, name, price) {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCart();
-    alert(`${name} has been added to the cart`);
+    
 }
 
 function updateCart() {

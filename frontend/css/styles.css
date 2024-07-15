@@ -101,7 +101,7 @@ button:hover {
 }
 /* Additional styles for items and cart containers */
 
-#items-container,
+.item-card,
 #cart-container {
     background-color: #333333; /* Dark container background */
     padding: 20px;
@@ -109,8 +109,14 @@ button:hover {
     border-radius: 8px;
 }
 
-#items-container {
-    margin-bottom: 20px; /* Add space between items and cart */
+.item-card {
+    flex: 1 1 calc(40% - 10px);
+    margin: 20px;
+}
+#items-container{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 #cart-container {
@@ -157,4 +163,9 @@ button:hover {
 
 #cart-container a:hover {
     background-color: #45a049; /* Darker green on hover */
+}
+img{
+    width: 90%;
+    height: auto;
+    border-radius: 20px;
 }

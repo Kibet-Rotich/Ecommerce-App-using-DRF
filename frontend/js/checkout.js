@@ -1,36 +1,26 @@
-document.addEventListener('DOMContentLoaded', () => {
-    updateCheckoutCart();
-    fetchLocations();
-});
-
-function updateCheckoutCart() {
-    const checkoutItemsContainer = document.getElementById('checkout-items');
-    const checkoutTotalAmountElement = document.getElementById('checkout-total-amount');
-    checkoutItemsContainer.innerHTML = '';
-
+// Assuming cart is an array of items stored in localStorage
+function loadCheckoutItems() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const checkoutItemsContainer = document.getElementById('checkout-items');
+    checkoutItemsContainer.innerHTML = '';
     let totalAmount = 0;
 
-    if (cart.length === 0) {
-        checkoutItemsContainer.innerHTML = '<tr><td colspan="4">Your cart is empty</td></tr>';
-    } else {
-        cart.forEach(item => {
-            const checkoutItem = document.createElement('tr');
-            const itemTotal = item.price * item.quantity;
+    cart.forEach(item => {
+        const totalItemPrice = item.price * item.quantity;
+        totalAmount += totalItemPrice;
 
-            checkoutItem.innerHTML = `
-                <td>${item.name}</td>
-                <td>$${item.price.toFixed(2)}</td>
-                <td>${item.quantity}</td>
-                <td>$${itemTotal.toFixed(2)}</td>
-            `;
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${item.name}</td>
+            <td>${item.price.toFixed(2)}</td>
+            <td>${item.quantity}</td>
+            <td>${totalItemPrice.toFixed(2)}</td>
+        `;
+        checkoutItemsContainer.appendChild(row);
+    });
 
-            checkoutItemsContainer.appendChild(checkoutItem);
-            totalAmount += itemTotal;
-        });
-    }
-
-    checkoutTotalAmountElement.textContent = totalAmount.toFixed(2);
+    document.getElementById('checkout-total-amount').textContent = totalAmount.toFixed(2);
+    return totalAmount;
 }
 
 function fetchLocations() {
@@ -41,7 +31,7 @@ function fetchLocations() {
             data.forEach(location => {
                 const option = document.createElement('option');
                 option.value = location.id;
-                option.textContent = `${location.location} (Shop: ${location.shop.name}, Cost: $${location.cost_of_shipment.toFixed(2)})`;
+                option.textContent = `${location.location} (Shop: ${location.shop.name}, Cost: $${parseFloat(location.cost_of_shipment).toFixed(2)})`;
                 locationSelect.appendChild(option);
             });
         })
@@ -49,45 +39,69 @@ function fetchLocations() {
 }
 
 function finalizeCheckout() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const selectedLocationId = document.getElementById('location-select').value;
-    const selectedLocationText = document.getElementById('location-select').selectedOptions[0].textContent;
-
-    // Get customer information from the form
+    const totalAmount = loadCheckoutItems(); // Ensure totalAmount is calculated
     const customerName = document.getElementById('customer-name').value;
     const customerEmail = document.getElementById('customer-email').value;
+    const selectedLocationId = document.getElementById('location-select').value;
 
-    if (cart.length === 0) {
-        alert('Your cart is empty');
+    if (!customerName || !customerEmail || !selectedLocationId) {
+        alert('Please fill in all required fields.');
         return;
     }
 
-    const order = {
-        customer_name: customerName,
-        customer_email: customerEmail,
-        location_id: selectedLocationId,
-        location_details: selectedLocationText,
-        status: 'pending',
-        order_items: cart.map(item => ({
-            item: item.id,
-            quantity: item.quantity,
-            price: item.price,
-        }))
-    };
+    // Fetch selected location details
+    fetch(`http://127.0.0.1:8000/api/locations/${selectedLocationId}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();  // Get response as text for debugging
+        })
+        .then(text => {
+            try {
+                const location = JSON.parse(text);  // Try parsing the text to JSON
+                const totalCost = totalAmount + parseFloat(location.cost_of_shipment);
 
-    fetch('http://127.0.0.1:8000/api/orders/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(order),
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert('Order placed successfully');
-        localStorage.removeItem('cart');
-        window.location.href = 'index.html';  // Redirect to the landing page after successful checkout
-    })
-    .catch(error => console.error('Error placing order:', error));
+                // Prepare order data
+                const orderData = {
+                    customer_name: customerName,
+                    customer_email: customerEmail,
+                    location_id: selectedLocationId,
+                    total_amount: totalCost,
+                    order_items: JSON.parse(localStorage.getItem('cart')) || []
+                };
+
+                // Make payment request to Daraja API (simulated here)
+                fetch('http://127.0.0.1:8000/api/initiate-payment/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Payment successful and order placed!');
+                        localStorage.removeItem('cart'); // Clear cart after successful order
+                    } else {
+                        alert('Payment failed, please try again.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error placing order:', error);
+                    alert('An error occurred, please try again.');
+                });
+            } catch (error) {
+                console.error('Error parsing location JSON:', error);
+                console.log('Response text was:', text);  // Log the text response for debugging
+            }
+        })
+        .catch(error => console.error('Error fetching location:', error));
 }
 
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadCheckoutItems();
+    fetchLocations();
+});
