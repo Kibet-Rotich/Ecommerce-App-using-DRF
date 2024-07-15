@@ -38,3 +38,19 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.item.name}"
+
+
+class Shop(models.Model):
+    name = models.CharField(max_length=100)
+    address = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+class Location(models.Model):
+    location = models.CharField(max_length=100)
+    shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
+    cost_of_shipment = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.location} - {self.shop.name}"

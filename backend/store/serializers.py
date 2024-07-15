@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Item, Order, OrderItem
+from .models import Item, Order, OrderItem,Location, Shop
 
 class ItemSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,3 +24,15 @@ class OrderSerializer(serializers.ModelSerializer):
         for order_item_data in order_items_data:
             OrderItem.objects.create(order=order, **order_item_data)
         return order
+
+class ShopSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Shop
+        fields = '__all__'
+
+class LocationSerializer(serializers.ModelSerializer):
+    shop = ShopSerializer()
+
+    class Meta:
+        model = Location
+        fields = '__all__'

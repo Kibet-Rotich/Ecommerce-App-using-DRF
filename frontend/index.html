@@ -14,13 +14,25 @@
         <section id="items-container">
             <!-- Items will be dynamically inserted here -->
         </section>
-        <button onclick="viewCart()">View Cart</button>
-        <section id="cart-container" style="display: none;">
+        <section id="cart-container">
             <h2>Your Cart</h2>
-            <div id="cart-items">
-                <!-- Cart items will be dynamically inserted here -->
+            <table id="cart-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Cart items will be dynamically inserted here -->
+                </tbody>
+            </table>
+            <div id="cart-total">
+                <p>Total Amount: $<span id="total-amount">0.00</span></p>
             </div>
-            <button onclick="checkout()">Checkout</button>
+            <a href="checkout.html">Checkout</a>
         </section>
 
     </main>

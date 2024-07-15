@@ -1,25 +1,30 @@
 document.addEventListener('DOMContentLoaded', () => {
     const itemsContainer = document.getElementById('items-container');
+    fetchItems();
 
-    fetch('http://127.0.0.1:8000/api/items/')
-        .then(response => response.json())
-        .then(data => {
-            data.forEach(item => {
-                const itemCard = document.createElement('div');
-                itemCard.className = 'item-card';
+    function fetchItems() {
+        fetch('http://127.0.0.1:8000/api/items/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    const itemCard = document.createElement('div');
+                    itemCard.className = 'item-card';
 
-                itemCard.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}">
-                    <h2>${item.name}</h2>
-                    <p>${item.description}</p>
-                    <p class="price">$${item.price}</p>
-                    <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
-                `;
+                    itemCard.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}">
+                        <h2>${item.name}</h2>
+                        <p>${item.description}</p>
+                        <p class="price">KES ${item.price}</p>
+                        <button onclick="addToCart(${item.id}, '${item.name}', ${item.price})">Add to Cart</button>
+                    `;
 
-                itemsContainer.appendChild(itemCard);
-            });
-        })
-        .catch(error => console.error('Error fetching items:', error));
+                    itemsContainer.appendChild(itemCard);
+                });
+            })
+            .catch(error => console.error('Error fetching items:', error));
+    }
+
+    updateCart();
 });
 
 function addToCart(id, name, price) {
@@ -33,32 +38,38 @@ function addToCart(id, name, price) {
     }
 
     localStorage.setItem('cart', JSON.stringify(cart));
-    
+    updateCart();
+    alert(`${name} has been added to the cart`);
 }
 
-function viewCart() {
-    const cartContainer = document.getElementById('cart-container');
+function updateCart() {
     const cartItemsContainer = document.getElementById('cart-items');
+    const totalAmountElement = document.getElementById('total-amount');
     cartItemsContainer.innerHTML = '';
 
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalAmount = 0;
 
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = '<p>Your cart is empty</p>';
+        cartItemsContainer.innerHTML = '<tr><td colspan="4">Your cart is empty</td></tr>';
     } else {
         cart.forEach(item => {
-            const cartItem = document.createElement('div');
-            cartItem.className = 'cart-item';
+            const cartItem = document.createElement('tr');
+            const itemTotal = item.price * item.quantity;
 
             cartItem.innerHTML = `
-                <p>${item.name} - $${item.price} x ${item.quantity}</p>
+                <td>${item.name}</td>
+                <td>KES ${item.price.toFixed(2)}</td>
+                <td>${item.quantity}</td>
+                <td>KES ${itemTotal.toFixed(2)}</td>
             `;
 
             cartItemsContainer.appendChild(cartItem);
+            totalAmount += itemTotal;
         });
     }
 
-    cartContainer.style.display = 'block';
+    totalAmountElement.textContent = totalAmount.toFixed(2);
 }
 
 function checkout() {
@@ -92,7 +103,7 @@ function checkout() {
     .then(data => {
         alert('Order placed successfully');
         localStorage.removeItem('cart');
-        document.getElementById('cart-container').style.display = 'none';
+        updateCart();
     })
     .catch(error => console.error('Error placing order:', error));
 }
