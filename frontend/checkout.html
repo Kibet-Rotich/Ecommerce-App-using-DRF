@@ -29,16 +29,25 @@
             <div id="checkout-total">
                 <p>Total Amount: $<span id="checkout-total-amount">0.00</span></p>
             </div>
-            <h2>Select Delivery Location</h2>
-            <select id="location-select">
-                <!-- Locations will be dynamically inserted here -->
-            </select>
+        
+            <!-- Customer Information Form -->
+            <form id="customer-info-form">
+                <h2>Customer Information</h2>
+                <label for="customer-name">Name:</label>
+                <input type="text" id="customer-name" name="customer-name" required>
+        
+                <label for="customer-email">Email:</label>
+                <input type="email" id="customer-email" name="customer-email" required>
+        
+                <h2>Select Delivery Location</h2>
+                <select id="location-select">
+                    <!-- Locations will be dynamically inserted here -->
+                </select>
+            </form>
+        
             <button onclick="finalizeCheckout()">Finalize Checkout</button>
         </section>
+        <script src="js/checkout.js"></script>
     </main>
-    <footer>
-        <p>&copy; 2024 E-commerce Store</p>
-    </footer>
-    <script src="js/checkout.js"></script>
-</body>
+</body>      
 </html>

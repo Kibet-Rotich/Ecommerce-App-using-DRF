@@ -53,14 +53,18 @@ function finalizeCheckout() {
     const selectedLocationId = document.getElementById('location-select').value;
     const selectedLocationText = document.getElementById('location-select').selectedOptions[0].textContent;
 
+    // Get customer information from the form
+    const customerName = document.getElementById('customer-name').value;
+    const customerEmail = document.getElementById('customer-email').value;
+
     if (cart.length === 0) {
         alert('Your cart is empty');
         return;
     }
 
     const order = {
-        customer_name: 'John Doe',
-        customer_email: 'john@example.com',
+        customer_name: customerName,
+        customer_email: customerEmail,
         location_id: selectedLocationId,
         location_details: selectedLocationText,
         status: 'pending',
@@ -86,3 +90,4 @@ function finalizeCheckout() {
     })
     .catch(error => console.error('Error placing order:', error));
 }
+
