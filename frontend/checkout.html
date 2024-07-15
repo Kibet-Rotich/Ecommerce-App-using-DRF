@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Checkout</h1>
+    </header>
+    <main>
+        <section id="checkout-container">
+            <h2>Your Order Summary</h2>
+            <table id="checkout-table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="checkout-items">
+                    <!-- Checkout items will be dynamically inserted here -->
+                </tbody>
+            </table>
+            <div id="checkout-total">
+                <p>Total Amount: $<span id="checkout-total-amount">0.00</span></p>
+            </div>
+            <h2>Select Delivery Location</h2>
+            <select id="location-select">
+                <!-- Locations will be dynamically inserted here -->
+            </select>
+            <button onclick="finalizeCheckout()">Finalize Checkout</button>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 E-commerce Store</p>
+    </footer>
+    <script src="js/checkout.js"></script>
+</body>
+</html>

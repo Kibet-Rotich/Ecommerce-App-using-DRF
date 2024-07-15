@@ -19,14 +19,19 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from store import views
 
+
 router = DefaultRouter()
 router.register(r'items', views.ItemViewSet)
 router.register(r'orders', views.OrderViewSet)
 router.register(r'order-items', views.OrderItemViewSet)
+router.register(r'locations', views.LocationListCreateView)
+router.register(r'shops', views.ShopListCreateView)
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
+    
 ]
 
 
