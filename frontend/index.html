@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Website</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Our E-commerce Store</h1>
+    </header>
+    <main>
+        <section id="items-container">
+            <!-- Items will be dynamically inserted here -->
+        </section>
+        <button onclick="viewCart()">View Cart</button>
+        <section id="cart-container" style="display: none;">
+            <h2>Your Cart</h2>
+            <div id="cart-items">
+                <!-- Cart items will be dynamically inserted here -->
+            </div>
+            <button onclick="checkout()">Checkout</button>
+        </section>
+
+    </main>
+    <footer>
+        <p>&copy; 2024 E-commerce Store</p>
+    </footer>
+    <script src="js/main.js"></script>
+</body>
+</html>
