@@ -74,3 +74,9 @@ def initiate_payment(request):
 
     response = requests.post(api_url, json=payload, headers=headers)
     return JsonResponse(response.json())
+
+from django.shortcuts import render
+
+def orders(request):
+    orders = Order.objects.all()
+    return render(request, 'orders.html', {"orders": orders})
