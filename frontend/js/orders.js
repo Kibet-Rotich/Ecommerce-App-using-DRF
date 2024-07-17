@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const orderContainer = document.getElementById('orders');
 
@@ -10,18 +9,28 @@ document.addEventListener('DOMContentLoaded', () => {
                     const orderCard = document.createElement('div');
                     orderCard.className = 'order-card';
                     orderCard.innerHTML = `
-                        <p>Order ID: ${order.id}</p>
-                        <p>Customer Name: ${order.customer_name}</p>
-                        <p>Customer Email: ${order.customer_email}</p>
-                        <p>Location: ${order.location}</p>
-                        <p>Status: ${order.status}</p>
-                        <p>Created At: ${order.created_at}</p>
-                        <p>Order Items: ${order.order_items.id}</p>
-                        <p>Order Items: ${order.order_items.quantity}</p>
-                        <p>Order Items: ${order.order_items.price}</p>
-                        <p>Order Items: ${order.order_items.item}</p>
+                        <p><strong>Order ID:</strong> ${order.id}</p>
+                        <p><strong>Customer Name:</strong> ${order.customer_name}</p>
+                        <p><strong>Customer Email:</strong> ${order.customer_email}</p>
+                        <p><strong>Location:</strong> ${order.location}</p>
+                        <p><strong>Status:</strong> ${order.status}</p>
+                        <p><strong>Created At:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+                        <p><strong>Order Items:</strong></p>
+                        <div id="order-items-${order.id}"></div>
                     `;
                     orderContainer.appendChild(orderCard);
+                    
+                    const orderItemsContainer = document.getElementById(`order-items-${order.id}`);
+                    order.order_items.forEach(item => {
+                        const orderItem = document.createElement('div');
+                        orderItem.className = 'order-item';
+                        orderItem.innerHTML = `
+                            <p>Item ID: ${item.id}</p>
+                            <p>Quantity: ${item.quantity}</p>
+                            <p>Price: ${item.price}</p>
+                        `;
+                        orderItemsContainer.appendChild(orderItem);
+                    });
                 });
             })
             .catch(error => console.error('Error fetching orders:', error));

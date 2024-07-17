@@ -43,8 +43,9 @@ function finalizeCheckout() {
     const customerName = document.getElementById('customer-name').value;
     const customerEmail = document.getElementById('customer-email').value;
     const selectedLocationId = document.getElementById('location-select').value;
+    const phoneNumber = document.getElementById('customer-phone').value; // Assuming there's an input for the phone number
 
-    if (!customerName || !customerEmail || !selectedLocationId) {
+    if (!customerName || !customerEmail || !selectedLocationId || !phoneNumber) {
         alert('Please fill in all required fields.');
         return;
     }
@@ -68,7 +69,9 @@ function finalizeCheckout() {
                     customer_email: customerEmail,
                     location_id: selectedLocationId,
                     total_amount: totalCost,
-                    order_items: JSON.parse(localStorage.getItem('cart')) || []
+                    order_items: JSON.parse(localStorage.getItem('cart')) || [],
+                    phone_number: phoneNumber,
+                    amount: totalCost
                 };
 
                 // Make payment request to Daraja API (simulated here)
@@ -99,6 +102,7 @@ function finalizeCheckout() {
         })
         .catch(error => console.error('Error fetching location:', error));
 }
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
