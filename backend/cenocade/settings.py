@@ -131,6 +131,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 DARAJA_CONSUMER_KEY = 'EZnLo86pMDXxz1tRDpx3DNnoOCEpW1jHL8AeDbLkhaGFLfnE'
 DARAJA_CONSUMER_SECRET = 'pl6F4uc3vf7mx3B3Iei02ZHpM7IhLGIl68OA4FrDktGpt7wUf9bTWllBD0zEmcM9'
-# DARAJA_BUSINESS_SHORTCODE = 'your_business_shortcode'
-DARAJA_PASSKEY = 'your_passkey'
-DARAJA_CALLBACK_URL = 'https://yourdomain.com/api/payment-callback/'  # Update with your actual callback URL
+DARAJA_BUSINESS_SHORTCODE = '174379'
+DARAJA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+DARAJA_CALLBACK_URL = 'http://127.0.0.1:5500/frontend/index.html'  # Update with your actual callback URL
