@@ -1,4 +1,3 @@
-// Assuming cart is an array of items stored in localStorage
 function loadCheckoutItems() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const checkoutItemsContainer = document.getElementById('checkout-items');
@@ -15,6 +14,7 @@ function loadCheckoutItems() {
             <td>${item.price.toFixed(2)}</td>
             <td>${item.quantity}</td>
             <td>${totalItemPrice.toFixed(2)}</td>
+            <td><button onclick="deleteItem(${item.id})">Delete</button></td>
         `;
         checkoutItemsContainer.appendChild(row);
     });
@@ -22,6 +22,14 @@ function loadCheckoutItems() {
     document.getElementById('checkout-total-amount').textContent = totalAmount.toFixed(2);
     return totalAmount;
 }
+
+function deleteItem(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.id !== itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    loadCheckoutItems(); // Refresh the checkout items list
+}
+
 
 function fetchLocations() {
     fetch('http://127.0.0.1:8000/api/locations/')

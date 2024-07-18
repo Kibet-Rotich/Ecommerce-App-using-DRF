@@ -62,6 +62,7 @@ function updateCart() {
                 <td>KES ${item.price.toFixed(2)}</td>
                 <td>${item.quantity}</td>
                 <td>KES ${itemTotal.toFixed(2)}</td>
+                <td><button onclick="deleteItem(${item.id})">Delete</button></td>
             `;
 
             cartItemsContainer.appendChild(cartItem);
@@ -71,6 +72,13 @@ function updateCart() {
 
     totalAmountElement.textContent = totalAmount.toFixed(2);
 }
+function deleteItem(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.filter(item => item.id !== itemId);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(); // Refresh the checkout items list
+}
+
 
 function checkout() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
