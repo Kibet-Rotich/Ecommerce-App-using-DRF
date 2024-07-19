@@ -60,7 +60,7 @@ function updateCart() {
             cartItem.innerHTML = `
                 <td>${item.name}</td>
                 <td>KES ${item.price.toFixed(2)}</td>
-                <td>${item.quantity}</td>
+                <td><input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${item.id}, this.value)"></td>
                 <td>KES ${itemTotal.toFixed(2)}</td>
                 <td><button onclick="deleteItem(${item.id})">Delete</button></td>
             `;
@@ -72,6 +72,20 @@ function updateCart() {
 
     totalAmountElement.textContent = totalAmount.toFixed(2);
 }
+
+function updateQuantity(itemId, newQuantity) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart = cart.map(item => {
+        if (item.id === itemId) {
+            item.quantity = parseInt(newQuantity, 10);
+        }
+        return item;
+    });
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCart(); // Refresh the checkout items list
+}
+
+
 function deleteItem(itemId) {
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
     cart = cart.filter(item => item.id !== itemId);
