@@ -58,7 +58,6 @@ function fetchLocations() {
         })
         .catch(error => console.error('Error fetching locations:', error));
 }
-
 function finalizeCheckout() {
     const totalAmount = loadCheckoutItems(); // Ensure totalAmount is calculated
     const customerName = document.getElementById('customer-name').value;
@@ -73,56 +72,45 @@ function finalizeCheckout() {
 
     // Fetch selected location details
     fetch(`http://127.0.0.1:8000/api/locations/${selectedLocationId}/`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();  // Get response as text for debugging
-        })
-        .then(text => {
-            try {
-                const location = JSON.parse(text);  // Try parsing the text to JSON
-                const totalCost = totalAmount + parseFloat(location.cost_of_shipment);
+        .then(response => response.json())
+        .then(location => {
+            const totalCost = totalAmount + parseFloat(location.cost_of_shipment);
 
-                // Prepare order data
-                const orderData = {
-                    customer_name: customerName,
-                    customer_email: customerEmail,
-                    location_id: selectedLocationId,
-                    total_amount: totalCost,
-                    order_items: JSON.parse(localStorage.getItem('cart')) || [],
-                    phone_number: phoneNumber,
-                    amount: totalCost
-                };
+            // Prepare order data
+            const orderData = {
+                customer_name: customerName,
+                customer_email: customerEmail,
+                location_id: selectedLocationId,
+                total_amount: totalCost,
+                order_items: JSON.parse(localStorage.getItem('cart')) || [],
+                phone_number: phoneNumber,
+                amount: totalCost
+            };
 
-                // Make payment request to Daraja API (simulated here)
-                fetch('http://127.0.0.1:8000/api/initiate-payment/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(orderData)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Payment successful and order placed!');
-                        localStorage.removeItem('cart'); // Clear cart after successful order
-                    } else {
-                        alert('Payment failed, please try again.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error placing order:', error);
-                    alert('An error occurred, please try again.');
-                });
-            } catch (error) {
-                console.error('Error parsing location JSON:', error);
-                console.log('Response text was:', text);  // Log the text response for debugging
-            }
+            // Make payment request to Daraja API (simulated here)
+            fetch('http://127.0.0.1:8000/api/initiate-payment/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.ResponseCode === '0') {
+                    alert('Payment initiated successfully. Please complete the payment on your phone.');
+                } else {
+                    alert('Payment initiation failed, please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error initiating payment:', error);
+                alert('An error occurred, please try again.');
+            });
         })
         .catch(error => console.error('Error fetching location:', error));
 }
+
 
 
 

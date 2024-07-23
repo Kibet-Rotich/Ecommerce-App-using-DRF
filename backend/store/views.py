@@ -30,19 +30,35 @@ class ShopListCreateView(generics.ListCreateAPIView):
     queryset = Shop.objects.all()
     serializer_class = ShopSerializer
 
+
+import base64
 import requests
+from datetime import datetime
 from django.conf import settings
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from datetime import datetime
-import base64
 
 def get_access_token():
     consumer_key = settings.DARAJA_CONSUMER_KEY
     consumer_secret = settings.DARAJA_CONSUMER_SECRET
     api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
-    response = requests.get(api_url, auth=(consumer_key, consumer_secret))
-    json_response = response.json()
+    r = requests.get(api_url, auth=(consumer_key, consumer_secret))
+    json_response = r.json()
+    return json_response['access_token']
+
+import base64
+import requests
+from datetime import datetime
+from django.conf import settings
+from django.http import JsonResponse
+from rest_framework.decorators import api_view
+
+def get_access_token():
+    consumer_key = settings.DARAJA_CONSUMER_KEY
+    consumer_secret = settings.DARAJA_CONSUMER_SECRET
+    api_url = "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials"
+    r = requests.get(api_url, auth=(consumer_key, consumer_secret))
+    json_response = r.json()
     return json_response['access_token']
 
 @api_view(['POST'])
@@ -79,9 +95,48 @@ def initiate_payment(request):
         "AccountReference": "CompanyXLTD",
         "TransactionDesc": "Payment for order"
     }
-
+    
     response = requests.post(api_url, json=payload, headers=headers)
     return JsonResponse(response.json())
+
+@api_view(['POST'])
+def payment_confirmation(request):
+    # Extract payment confirmation data
+    payment_data = request.data
+
+    # Assuming you receive these fields from the Daraja API confirmation
+    order_id = payment_data.get('order_id')
+    transaction_id = payment_data.get('transaction_id')
+    status = payment_data.get('status')  # e.g., 'completed', 'failed'
+    amount = payment_data.get('amount')
+    phone_number = payment_data.get('phone_number')
+    payment_time = payment_data.get('payment_time')
+
+    # Validate the received data
+    if not order_id or not transaction_id or not status or not amount or not phone_number or not payment_time:
+        return JsonResponse({'error': 'Invalid payment confirmation data'}, status=400)
+
+    try:
+        # Find the corresponding order
+        order = Order.objects.get(id=order_id)
+    except Order.DoesNotExist:
+        return JsonResponse({'error': 'Order not found'}, status=404)
+
+    # Update the order status and save payment details
+    if status == 'completed':
+        order.status = 'completed'
+    else:
+        order.status = 'failed'
+
+    order.save()
+
+    # Save additional payment details if needed
+    # For example, create a Payment model to store transaction details
+
+    return JsonResponse({'result': 'Payment confirmation received and order updated'})
+
+
+
 
 from django.shortcuts import render
 

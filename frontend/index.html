@@ -10,32 +10,41 @@
     <header>
         <h1>Welcome to Our E-commerce Store</h1>
     </header>
+    <nav>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="checkout.html">Your Cart</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact Us</a></li>
+        </ul>
+    </nav>
     <main>
-        <section id="items-container">
-            <!-- Items will be dynamically inserted here -->
+        <section id="container">
+            <section id="items-container">
+                <!-- Items will be dynamically inserted here -->
+            </section>
+            <section id="cart-container">
+                <h2>Your Cart</h2>
+                <table id="cart-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cart-items">
+                        <!-- Cart items will be dynamically inserted here -->
+                    </tbody>
+                </table>
+                <div id="cart-total">
+                    <p>Total Amount: $<span id="total-amount">0.00</span></p>
+                </div>
+                <a href="checkout.html">Checkout</a>
+            </section>
         </section>
-        <section id="cart-container">
-            <h2>Your Cart</h2>
-            <table id="cart-table">
-                <thead>
-                    <tr>
-                        <th>Item</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Total</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="cart-items">
-                    <!-- Cart items will be dynamically inserted here -->
-                </tbody>
-            </table>
-            <div id="cart-total">
-                <p>Total Amount: $<span id="total-amount">0.00</span></p>
-            </div>
-            <a href="checkout.html">Checkout</a>
-        </section>
-
     </main>
     <footer>
         <p>&copy; 2024 E-commerce Store</p>
