@@ -105,6 +105,7 @@ def payment_confirmation(request):
     payment_data = request.data
 
     # Assuming you receive these fields from the Daraja API confirmation
+    print("Data received")
     order_id = payment_data.get('order_id')
     transaction_id = payment_data.get('transaction_id')
     status = payment_data.get('status')  # e.g., 'completed', 'failed'
