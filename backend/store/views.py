@@ -69,6 +69,9 @@ def initiate_payment(request):
     if not phone_number or not amount:
         return JsonResponse({'error': 'Phone number and amount are required'}, status=400)
 
+    # Create a pending order
+    order = Order.objects.create(amount=amount, phone_number=phone_number, status='pending')
+
     access_token = get_access_token()
     api_url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
     headers = {
@@ -92,47 +95,73 @@ def initiate_payment(request):
         "PartyB": business_short_code,
         "PhoneNumber": phone_number,
         "CallBackURL": settings.DARAJA_CALLBACK_URL,
-        "AccountReference": "CompanyXLTD",
+        "AccountReference": str(order.id),
         "TransactionDesc": "Payment for order"
     }
     
     response = requests.post(api_url, json=payload, headers=headers)
     return JsonResponse(response.json())
 
+
 @api_view(['POST'])
 def payment_confirmation(request):
     # Extract payment confirmation data
-    payment_data = request.data
+    payment_data = request.data.get("Body", {}).get("stkCallback", {})
 
-    # Assuming you receive these fields from the Daraja API confirmation
-    print("Data received")
-    order_id = payment_data.get('order_id')
-    transaction_id = payment_data.get('transaction_id')
-    status = payment_data.get('status')  # e.g., 'completed', 'failed'
-    amount = payment_data.get('amount')
-    phone_number = payment_data.get('phone_number')
-    payment_time = payment_data.get('payment_time')
+    # Extract relevant fields
+    result_code = payment_data.get("ResultCode")
+    result_desc = payment_data.get("ResultDesc")
+    callback_metadata = payment_data.get("CallbackMetadata", {}).get("Item", [])
+
+    # Initialize variables
+    amount = None
+    transaction_id = None
+    transaction_date = None
+    phone_number = None
+    account_reference = None
+
+    # Extract fields from callback metadata
+    for item in callback_metadata:
+        if item["Name"] == "Amount":
+            amount = item["Value"]
+        elif item["Name"] == "MpesaReceiptNumber":
+            transaction_id = item["Value"]
+        elif item["Name"] == "TransactionDate":
+            transaction_date = item["Value"]
+        elif item["Name"] == "PhoneNumber":
+            phone_number = item["Value"]
+        elif item["Name"] == "AccountReference":
+            account_reference = item["Value"]
 
     # Validate the received data
-    if not order_id or not transaction_id or not status or not amount or not phone_number or not payment_time:
-        return JsonResponse({'error': 'Invalid payment confirmation data'}, status=400)
+    if not account_reference:
+        return JsonResponse({'error': 'Missing AccountReference'}, status=400)
+    if not transaction_id:
+        return JsonResponse({'error': 'Missing Transaction ID'}, status=400)
+    if not amount:
+        return JsonResponse({'error': 'Missing Amount'}, status=400)
+    if not phone_number:
+        return JsonResponse({'error': 'Missing Phone Number'}, status=400)
+    if not transaction_date:
+        return JsonResponse({'error': 'Missing Transaction Date'}, status=400)
 
     try:
-        # Find the corresponding order
-        order = Order.objects.get(id=order_id)
+        # Find the corresponding order using the Account Reference
+        order = Order.objects.get(id=account_reference)
     except Order.DoesNotExist:
         return JsonResponse({'error': 'Order not found'}, status=404)
 
     # Update the order status and save payment details
-    if status == 'completed':
+    if result_code == 0:  # assuming 0 indicates success
         order.status = 'completed'
     else:
         order.status = 'failed'
 
+    order.transaction_id = transaction_id
+    order.payment_amount = amount
+    order.payment_phone_number = phone_number
+    order.payment_time = datetime.strptime(str(transaction_date), "%Y%m%d%H%M%S")
     order.save()
-
-    # Save additional payment details if needed
-    # For example, create a Payment model to store transaction details
 
     return JsonResponse({'result': 'Payment confirmation received and order updated'})
 

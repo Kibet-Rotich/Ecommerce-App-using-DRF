@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-3w_ai8kp^7$_csyw*6*#=^yt5hl8@*l+ie(eddex7cn-^prwu4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['9f52-102-212-236-165.ngrok-free.app','127.0.0.1','0.0.0.0']
 
 
 # Application definition
@@ -133,4 +133,4 @@ DARAJA_CONSUMER_KEY = 'EZnLo86pMDXxz1tRDpx3DNnoOCEpW1jHL8AeDbLkhaGFLfnE'
 DARAJA_CONSUMER_SECRET = 'pl6F4uc3vf7mx3B3Iei02ZHpM7IhLGIl68OA4FrDktGpt7wUf9bTWllBD0zEmcM9'
 DARAJA_BUSINESS_SHORTCODE = '174379'
 DARAJA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
-DARAJA_CALLBACK_URL = 'https://1517-41-204-187-5.ngrok-free.app/api/payment-confirmation/'
+DARAJA_CALLBACK_URL = 'https://9f52-102-212-236-165.ngrok-free.app/api/payment-confirmation/'
